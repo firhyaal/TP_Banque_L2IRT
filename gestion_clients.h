@@ -72,8 +72,15 @@ int charger_clients(Client clients[]) {
 void enregistrer_client (Client clients[], int *nbClients){
     Client nouveauClient;
     Date today = date_courante();
+    int idExiste;
     printf("ID du client:");
-    scanf("%d",&nouveauClient.id); //Verification de l'ID unique
+    scanf("%d",&nouveauClient.id); 
+    //Verifier que l'ID n'existe pas déjà
+    idExiste = rechercher_client_par_id(clients, *nbClients, nouveauClient.id);
+    if (idExiste != -1) {
+        printf("Erreur : Un client avec l'ID %d existe déjà.\n", nouveauClient.id);
+        return;
+    }
     printf("Nom :");
     scanf("%s",&nouveauClient.nom);
     printf("Prenom :");
