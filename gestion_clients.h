@@ -75,11 +75,11 @@ void enregistrer_client (Client clients[], int *nbClients){
     printf("ID du client:");
     scanf("%d",&nouveauClient.id); //Verification de l'ID unique
     printf("Nom :");
-    scanf("%d",&nouveauClient.nom);
+    scanf("%s",&nouveauClient.nom);
     printf("Prenom :");
-    scanf("%d",&nouveauClient.prenom);
+    scanf("%s",&nouveauClient.prenom);
     printf("Sexe(M/F) :");
-    scanf("%d",&nouveauClient.sexe);
+    scanf("%c",&nouveauClient.sexe);
     do {
         printf("Date de naissance (jour mois annee) :");
         scanf("%d %d %d",&nouveauClient.dateNaissance.jour,&nouveauClient.dateNaissance.mois,&nouveauClient.dateNaissance.annee);
