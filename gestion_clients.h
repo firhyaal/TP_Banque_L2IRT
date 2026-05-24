@@ -53,7 +53,7 @@ int charger_clients(Client clients[]) {
     if (f == NULL) return 0;  // fichier inexistant → 0 client
 
     int nbClients = 0;
-    while (fscanf(f, "%d|%[^|]|%[^|]|%c|%d/%d/%d|%s\n",
+    while (fscanf(f, "%d| %[^|]| %[^|]| %c| %d/%d/%d| %s\n",
                   &clients[nbClients].id,
                   clients[nbClients].nom,
                   clients[nbClients].prenom,
@@ -68,6 +68,15 @@ int charger_clients(Client clients[]) {
     return nbClients;   // retourne le nombre de clients lus
 }
 
+//fonction pour rechercher un client par son id(recherche par id et retourne l'indice ou -1)
+int rechercher_client_par_id (Client clients[], int nbClients, unsigned int id){
+    for (int i = 0; i < nbClients; i++){
+        if (clients[i].id == id)
+            return i;
+    }
+    return -1;
+}
+
 //fonction pour enregistrer un client(ajoute un client et le sauvegarde)
 void enregistrer_client (Client clients[], int *nbClients){
     Client nouveauClient;
@@ -78,7 +87,7 @@ void enregistrer_client (Client clients[], int *nbClients){
     //Verifier que l'ID n'existe pas déjà
     idExiste = rechercher_client_par_id(clients, *nbClients, nouveauClient.id);
     if (idExiste != -1) {
-        printf("Erreur : Un client avec l'ID %d existe déjà.\n", nouveauClient.id);
+        printf("Erreur : Un client avec l'ID %d existe deja.\n", nouveauClient.id);
         return;
     }
     printf("Nom :");
@@ -86,7 +95,7 @@ void enregistrer_client (Client clients[], int *nbClients){
     printf("Prenom :");
     scanf("%s",&nouveauClient.prenom);
     printf("Sexe(M/F) :");
-    scanf("%c",&nouveauClient.sexe);
+    scanf(" %c",&nouveauClient.sexe);
     do {
         printf("Date de naissance (jour mois annee) :");
         scanf("%d %d %d",&nouveauClient.dateNaissance.jour,&nouveauClient.dateNaissance.mois,&nouveauClient.dateNaissance.annee);
@@ -100,15 +109,6 @@ void enregistrer_client (Client clients[], int *nbClients){
     (*nbClients)++;
     sauvegarder_clients(clients, *nbClients);
     printf("Enregistrement reussi\n");
-}
-
-//fonction pour rechercher un client par son id(recherche par id et retourne l'indice ou -1)
-int rechercher_client_par_id (Client clients[], int nbClients, unsigned int id){
-    for (int i = 0; i < nbClients; i++){
-        if (clients[i].id == id)
-            return i;
-    }
-    return -1;
 }
 
 /*fonction pour rechercher un client par son nom
