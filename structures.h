@@ -1,5 +1,11 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
+#define solde_init_epargne 10000.0
+#define solde_init_courant 0.0
+#define solde_min_epargne 5000.0
+#define facilite_privilege 200000.0
+#define taxe_facilite 0.05
+
 //structure pour la date
 typedef struct Date Date;
 struct Date{
