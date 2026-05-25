@@ -38,7 +38,7 @@ void crediter_compte(Compte comptes[],int nb,int numero,double montant){
 }
 
 //fonction pour débiter un compte
-void debiter_compte(Compte comptes[],int nb,int numero,double montant){
+void debiter_compte(Compte comptes[],int nb,int numero,double montant,char*pin){
 	double taxe=0.0;
 	double dispo=c->solde+c->faciliteCaisse;
 	double depassement=montant-c>solde;
@@ -46,6 +46,7 @@ void debiter_compte(Compte comptes[],int nb,int numero,double montant){
 	if(montant<=0){
 		printf("impossible de débiter ce montant.");
 	}
+	//rechercher le compte à debiter
 	Compte*c = rechercher_compte(comptes,nb,numero);
 	if(!c){
 		printf("Compte n°%d introuvalble.\n",numero);
@@ -54,6 +55,9 @@ void debiter_compte(Compte comptes[],int nb,int numero,double montant){
 		printf("compte bloqué. Operation impossible.\n");
 	
 	}
+	//verifier code pin
+	if(!verifierPin(c,pin))
+	return 0;
 	//verifier disponibilite
 	if(!solde_suffisant(c,montant)){
 		
@@ -68,6 +72,7 @@ void debiter_compte(Compte comptes[],int nb,int numero,double montant){
 	c->solde-=(montant+taxe);
 	printf("taxe facilite appliquee:%.2f FCFA\n",taxe);
 	printf("debit de %.2f FCFA effectue.Nouveau solde:%.2f FCFA\n",montant,c->solde);
+	return 1;
 	
 }
 #endif
