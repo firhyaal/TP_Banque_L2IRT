@@ -1,13 +1,12 @@
 #ifndef JOURNAL_H
 #define JOURNAL_H
 #include "structures.h"
- //#include "comptes.h"
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define CLE_XOR 0x5A
 #define max_essai_pin 3
-#define pinLen 10
 /* Gestion de l'authentification PIN
     - D'abord faire une recherche du compte par N°
     - Authentifier en passant par la fonction 
