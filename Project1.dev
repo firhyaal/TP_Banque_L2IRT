@@ -29,7 +29,10 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000000000000
+<<<<<<< HEAD
 UnitCount=1
+=======
+>>>>>>> menu
 
 [VersionInfo]
 Major=1
@@ -50,6 +53,7 @@ ProductVersion=
 AutoIncBuildNr=0
 SyncProduct=1
 
+<<<<<<< HEAD
 [Unit1]
 FileName=operations.h
 CompileCpp=0
@@ -60,3 +64,5 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+=======
+>>>>>>> menu
