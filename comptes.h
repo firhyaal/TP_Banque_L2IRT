@@ -6,7 +6,7 @@
 #include "structures.h"
 #include "gestion_clients.h"
 #include <time.h>
-#include "journal.h"
+//#include "journal.h"
 
 // Charger depuis comptes.txt dans le tableau de compte
 
