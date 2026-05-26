@@ -2,78 +2,97 @@
 #define<operations.h>
 #include<stdio.h>
 #include<stdlib.h>
-#include<structures.h>
+#include"structures.h"
+#include "journal.h"
+#include"comptes.h"
+
 //taxe de facilite
-void calcul_taxe(double montant,char cat){
-	if (cat==PRIVILEGE)
+double calcul_taxe(double montant,char cat){
+	if (strcmp(cat,"privilege")==0)
 		return montant*faciliteCaisse;
 }
 
 //vérifier si solde suffisant pour debit
-void solde_suffisant(compte*c,double montant){
+int solde_suffisant(compte*c,double montant){
 	//compte epargne 
-	if(c->type==epargne){
+	if(strcmp(c->type,"epargne")==0){
 		return (c->solde-montant)>=solde_min_epargne;//sauf fermeture
 	}
 	//compte courant
 	return (c->solde-montant)<= -(c->faciliteCaisse);
 }
 //créditer un compte
-void crediter_compte(Compte comptes[],int nb,int numero,double montant){
-	
+int crediter_compte(Compte comptes[],int nb,int numero,double montant){
+	int index;
 	if(montant<=0){
-		printf("impossible de débiter ce montant.");
+		printf("impossible de crediter ce montant.");
 	}
-	Compte*c = rechercher_compte(comptes,nb,numero);
-	if(!c){
+	index = rechercher_compte(comptes,nb,numero);
+	
+	if(index ==-1){
 		printf("Compte n°%d introuvalble.\n",numero);
-	} elseif(c->bloque){
+		return 0;
+	} 
+	if(strcmp(comptes[index].etat,"bloque")==0){
 		printf("compte bloqué. Operation impossible.\n");
+		return 0;
 	
-	}else{
-		c->solde+=montant
-		printf("crédit de %.2f FCFA effectue.Nouveau solde:%.2f FCFA\n",montant,c->solde);
+	}
+	comptes[index].solde+=montant
+	printf("crédit de %.2f FCFA effectue.Nouveau solde:%.2f FCFA\n",montant,comptes[index].solde);
+	return 1;
 	}
 	
+	
+	return 0;
 }
 
 //fonction pour débiter un compte
-void debiter_compte(Compte comptes[],int nb,int numero,double montant,char*pin){
+double debiter_compte(Compte comptes[],int nb,int numero,double montant,char*pin){
 	double taxe=0.0;
-	double dispo=c->solde+c->faciliteCaisse;
-	double depassement=montant-c>solde;
+	double dispo;
+	double depassement;
+	int index;
 	
 	if(montant<=0){
 		printf("impossible de débiter ce montant.");
 	}
 	//rechercher le compte à debiter
-	Compte*c = rechercher_compte(comptes,nb,numero);
-	if(!c){
-		printf("Compte n°%d introuvalble.\n",numero);
-	} 
-	if(c->bloque){
-		printf("compte bloqué. Operation impossible.\n");
+	index=rechercher_compte(comptes,nb,numero);
 	
-	}
-	//verifier code pin
-	if(!verifierPin(c,pin))
-	return 0;
-	//verifier disponibilite
-	if(!solde_suffisant(c,montant)){
+	
+		if(index==-1){
+			printf("Compte n°%d introuvalble.\n",numero);
+			return 0;
+		} 
+		if(strcmp(comptes[index].etat,"bloque")==0){
+			printf("compte bloqué. Operation impossible.\n");
+			return 0;
 		
-		printf("solde insuffisant.Disponible %.2f FCFA\n",dispo);
-	}
-	//calcul taxe
-	if(c->type==courant && c->categorie==privilege){
-		if (depassement>0){
-			taxe=calcul_taxe(depassement,c->categorie);
 		}
-	}
-	c->solde-=(montant+taxe);
-	printf("taxe facilite appliquee:%.2f FCFA\n",taxe);
-	printf("debit de %.2f FCFA effectue.Nouveau solde:%.2f FCFA\n",montant,c->solde);
-	return 1;
+		//verifier code pin
+		if(!authentification(comptes,index,nb))
+		return 0;
+		//verifier disponibilite
+		dispo=(comptes[index].solde)+(comptes[index].faciliteCaisse);
+		if(!solde_suffisant(comptes[index],montant)){
+			
+			printf("solde insuffisant.Disponible %.2f FCFA\n",dispo);
+			return 0; 
+		}
+		//calcul taxe
+		depassement=montant-(comptes[index].solde);
+		if(strcmp(comptes[index].type,"courant")==0 &&strcmp(comptes[index].categorie,"privilege")==0){
+			if (depassement>0){
+				taxe=calcul_taxe(depassement,comptes[index].categorie);
+			}
+		}
+	comptes[index].solde-=(montant+taxe);
+		printf("taxe facilite appliquee:%.2f FCFA\n",taxe);
+		printf("debit de %.2f FCFA effectue.Nouveau solde:%.2f FCFA\n",montant,comptes[index].solde);
+		return 1;
 	
+	return 0;
 }
 #endif
 
