@@ -57,6 +57,7 @@ void menu_consulter(){
 	consulterCompte(comptes,nbComptes);
 
 }
+//fonction pour le menu débiter
 void menu_debiter(){
 	
 	float montant_d;
