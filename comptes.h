@@ -6,9 +6,7 @@
 #include "structures.h"
 #include "gestion_clients.h"
 #include <time.h>
-
-// prototype de la fonction fournie par Jeff
-int verifierPin(Compte comptes[], int index, int n);
+#include "journal.h"
 
 // Charger depuis comptes.txt dans le tableau de compte
 
@@ -18,7 +16,7 @@ void chargerComptes(Compte comptes[], int *n, int *dernierNumero) {
 
     if (f == NULL) return;
 
-    while (fscanf(f, "%d | %u | %f | %f | %s | %s | %s | %s | %d/%d/%d\n",
+    while (fscanf(f, "%d|%u|%f|%f|%[^|]|%[^|]|%[^|]|%[^|]|%d/%d/%d\n",
         &comptes[*n].numero,
         &comptes[*n].idClient,
         &comptes[*n].solde,
@@ -48,7 +46,7 @@ void sauvegarderComptes(Compte comptes[], int n) {
     if (f == NULL) return;
 
     for (int i = 0; i < n; i++) {
-        fprintf(f, "%d | %u | %.0f | %.0f | %s | %s | %s | %s | %d/%d/%d\n",
+        fprintf(f, "%d|%u|%.0f|%.0f|%s|%s|%s|%s|%d/%d/%d\n",
             comptes[i].numero,
             comptes[i].idClient,
             comptes[i].solde,
@@ -95,7 +93,7 @@ void creerCompte(Compte comptes[], int *n, int *dernierNumero, Client clients[],
     if (choix == 1) {
         int nouv_client ;
         int client_prec ;
-        do{ // Obliger de passer par là car enreg_client ne retourne rien
+        do{ //  passer par là car enreg_client ne retourne rien
             client_prec = *nbClients;
             enregistrer_client(clients, nbClients);
 
@@ -212,9 +210,12 @@ void creerCompte(Compte comptes[], int *n, int *dernierNumero, Client clients[],
 
     initialiserCompte(&c);
 
+    char pinBrut[10];
     printf("Saisissez votre Code PIN : ");
-    scanf("%s", c.codePin);
+    scanf("%s", pinBrut);
+    crypterPin(pinBrut, c.codePin); 
 
+    
     comptes[(*n)++] = c;
     sauvegarderComptes(comptes, *n);
 
@@ -225,7 +226,7 @@ void creerCompte(Compte comptes[], int *n, int *dernierNumero, Client clients[],
 // Rechercher un compte par son num de compte
 
 int rechercherCompte(Compte comptes[], int n, int numero) {
-    
+
     for (int i = 0; i < n; i++) {
         if (comptes[i].numero == numero)
             return i;
@@ -264,7 +265,7 @@ void consulterCompte(Compte comptes[], int n) {
         } 
     }while (index == -1);
 
-    if (!verifierPin( comptes, index,  n )) return;
+    if (!authentification(comptes,index, n )) return;
 
     afficherCompte(comptes, index);
 }
