@@ -5,6 +5,7 @@
 #define solde_min_epargne 5000.0
 #define facilite_privilege 200000.0
 #define taxe_facilite 0.05
+#define pinLen 10
 
 //structure pour la date
 typedef struct Date Date;

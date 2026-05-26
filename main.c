@@ -3,158 +3,16 @@
 #include <stdlib.h>
 #include "structures.h"
 #include "gestion_clients.h"
-#include "operation.h"
+#include "operations.h"
+#include "comptes.h"
+#include "journal.h"
 
-void afficherMenu(void);
-void afficher_titre_encadre(char titre[]);
-
-int main() {
-    int choix = 0;
-    int idRecherche;
-    Client tabClients[100];
-    int *nbClients=0;
-    int numeroSaisi;
-    double montantSaisi;
-    Compte tabCompte[100];
-    int nbComptes=0;
-    Compte mesComptes[100];
-    do {
-        afficherMenu();
-        
-        printf("Votre choix : ");
-        
-        // Sécurité anti-plantage si quelqu'un saisit une lettre
-        if (scanf("%d", &choix) != 1) {
-            printf("\n[Erreur] Saisie invalide ! Veuillez entrer un chiffre entre 1 et 7.\n");
-            while (getchar() != '\n'); 
-            choix=-1;
-        }
-
-        
-
-        switch (choix) {
-            case 1:
-                printf("\n--- [Option 1] Ouverture de compte bancaire ---\n");
-                system("pause");
-                // Connexion avec le travail de Falonne et Christia
-                ouvrir_compte(); 
-                break;
-                
-            case 2:
-                printf("\n--- [Option 2] Credit (Depot / Versement d'argent) ---\n");
-                 system("pause");        
-
-                // Connexion avec le travail de Firhyaal
-                effectuer_versement();
-                break;
-                
-            case 3:
-                printf("\n--- [Option 3] Debit (Retrait d'argent) ---\n");
-                 // 1. Demander le numéro de compte
-                printf("Entrez le numero de compte : ");
-                scanf("%d", &numeroSaisi);
-    
-                // 2. Demander le montant
-                printf("Entrez le montant a debiter : ");
-                scanf("%lf", &montantSaisi); // %lf pour un double
-    
-                // 3. Appel de la fonction avec les variables remplies
-                // Assure-toi que 'tabComptes' et 'nbComptes' sont bien définis dans ton main
-                debiter_compte(tabCompte, nbComptes,numeroSaisi,montantSaisi);
-                system("pause");
-
-                // Connexion avec le travail de Firhyaal
-                effectuer_retrait();
-                break;
-                
-            case 4:
-              printf("\nEntrez le numero de compte a rechercher : ");
-              int num;
-              scanf("%d", &num);
-
-             // Appeler la fonction avec les arguments nécessaires
-              Compte *c = rechercher_compte(mesComptes, nbComptes, num);
-
-             if (c != NULL) {
-             printf("Compte trouve ! Solde : %.2f\n", c->solde);
-             } else {
-             printf("Erreur : Compte introuvable.\n");
-             }
-                printf("\n--- [Option 4] Consultation de compte ---\n");
-                system("pause");
-                // Connexion avec le travail de Falonne ou Jeff
-                Compte *c =rechercherCompte(mesComptes, nbComptes, numeroSaisi);
-                break;
-                
-            case 5:
-                printf("\n--- [Option 5] Recherche d'un client ---\n");
-            
-                printf("Entrez l'ID du client a rechercher : ");
-                scanf("%d", &idRecherche);
-
-               int index = rechercher_client_par_id(tabClients, *nbClients, idRecherche);
-
-                // 3. Afficher le résultat
-               if (index != -1) {
-              printf("Client trouve a l'index %d.\n", index);
-              // Tu peux ajouter ici l'affichage des détails du client si tu veux
-              } else {
-              printf("Client introuvable.\n");
-               system("pause");
-              }
-             break;
-                
-            case 6:
-                printf("\n--- [Option 6] Affichage de l'historique (Journal) ---\n");
-                printf("Entrez le numero de compte : ");
-                int num;
-                scanf("%d", &num);
-
-                 // 1. Recherche du compte pour vérifier qu'il existe
-                 Compte *c = rechercher_compte(mesComptes, nbComptes, num);
-
-                if (c != NULL) {
-                // 2. Appel de la fonction d'affichage (supposée exister dans ton projet)
-                afficher_historique(c); 
-                } else {
-                printf("Erreur : Compte introuvable.\n");
-                }
-    
-                system("pause");
-                break;
-                
-            case 7:
-                printf("\n===================================================\n");
-                printf(" Fermeture du systeme bancaire. Au revoir !\n");
-                printf("===================================================\n");
-                break;
-                
-            default:
-                printf("\n[Attention] Option inconnue ! Choisis un chiffre entre 1 et 7.\n\n");
-        }
-    } while (choix != 0);
-
-    return 0;
-}
-
-
-// Fonction d'affichage du menu principal
-void afficherMenu() {
-    afficher_titre_encadre("SYSTEME DE GESTION BANCAIRE L2-IRT");
-    printf("1. Creer un nouveau compte bancaire\n");
-    printf("2. Crediter un compte (Versement)\n");
-    printf("3. Debiter un compte (Retrait)\n");
-    printf("4. Consulter le solde d'un compte\n");
-    printf("5. Rechercher un client\n");
-    printf("6. Afficher l'historique des operations (Journal)\n");
-    printf("7. Quitter l'application\n");
-
-    
-}
-
-
-
-
+Client clients[100];
+Compte comptes[100];
+int nbClients=0;
+int nbComptes=0;
+int nbJournal=0;
+int indexCompte;
 void afficher_titre_encadre(char titre[]) {
     int longueur = strlen(titre);
     int i;
@@ -175,7 +33,183 @@ void afficher_titre_encadre(char titre[]) {
         printf("-");
     }
     printf("+\n\n");
+	}
+//initialisation des fichiers
+void init_data(){
+	charger_clients(clients);
+	chargerComptes(comptes,&nbComptes);
+	
 }
+//sauvegarde des donn�es
+
+void sauvegarde_globale(){
+	sauvegarder_clients(clients,nbClients);
+	sauvegarderComptes(comptes,nbComptes);
+	
+}
+void menu_creer_compte(){
+	afficher_titre_encadre("CREER UN COMPTE");
+	creerCompte(comptes,&nbComptes,clients,&nbClients);
+		sauvegarde_globale();
+}
+void menu_consulter(){
+	afficher_titre_encadre("CONSULTER MON COMPTE");
+	consulterCompte(comptes,nbComptes);
+
+}
+void menu_debiter(){
+	
+	float montant_d;
+	double solde_avant=0;
+	int num;
+	char pinc[10];
+	afficher_titre_encadre("DEBITER UN COMPTE");
+	printf("Num�ro de compte:\n");
+	scanf("%d",&num);
+	printf("Code pin:\n");
+	scanf("%s",&pinc);
+	printf("Montant a debiter:\n");
+	scanf("%.2f",&montant_d);
+	debiter_compte(comptes,nbComptes,num,montant_d,pinc);
+	enregistrer_journal(num,"DEBIT",montant_d,comptes[indexCompte].solde);
+	
+}
+void menu_crediter(){
+	
+	float montant_c;
+	int numeroc;
+	char pinco[10];
+	afficher_titre_encadre("CREDITER UN COMPTE");
+	printf("Num�ro de compte:\n");
+	scanf("%d",numeroc);
+	printf("Montant a crediter:\n");
+	scanf("%.2f",&montant_c);
+	crediter_compte(comptes,nbComptes,numeroc,montant_c);
+	enregistrer_journal(numeroc,"CREDIT",montant_c,comptes[indexCompte].solde);
+	
+}
+void menu_rechercher_client(){
+	int choice;
+	char nom[15];
+	int numCompte;
+	afficher_titre_encadre("RECHERCHER UN CLIENT");
+	printf("1-Par nom de famille\n2-par num�ro de compte\nchoix:");
+	scanf("%d\n",&choice);
+	if(choice==1){
+		printf("Veuillez entrer votre nom:");
+		scanf("%s\n",&nom);
+		rechercher_par_nom(clients,nbClients,nom);
+	}else if(choice==2){
+		printf("Veuillez entrer votre numero de compte:");
+		scanf("%s\n",&numCompte);
+		rechercherParNumeroCompte(comptes,nbComptes,clients,nbClients);
+	} else{
+		printf("erreur choisissez le bon chiffre");
+	}
+	
+}
+void menu_historique_compte(){
+	char nom[15];
+	int numeCompte;
+	printf("Veuillez entrer votre nom:");
+	scanf("%s\n",&nom);
+	printf("Veuillez entrer votre numero de compte:");
+	scanf("%s\n",&numeCompte);
+	afficher_historique(numeCompte,comptes,nbComptes,clients,nbClients);
+}
+void afficherMenu() {
+    afficher_titre_encadre("BANQUE-MENU PRINCIPAL");
+    printf("0-s'enregistrer\n");
+    printf("1. Creer un nouveau compte bancaire\n");
+    printf("2. Crediter un compte (Versement)\n");
+    printf("3. Debiter un compte (Retrait)\n");
+    printf("4. Consulter le solde d'un compte\n");
+    printf("5. Rechercher un client\n");
+    printf("6. Afficher l'historique des operations (Journal)\n");
+    printf("7. Quitter l'application\n");
+
+    
+}
+
+int main() {
+	init_data;
+
+    int choix;
+    /*int idRecherche;
+    Client tabClients[100];
+    int *nbClients=0;
+    int numeroSaisi;
+    double montantSaisi;
+    Compte tabCompte[100];
+    int nbComptes=0;
+    Compte mesComptes[100];*/
+    do {
+        afficherMenu();
+        
+        printf("Votre choix : ");
+        scanf("%d", &choix);
+        // Sécurité anti-plantage si quelqu'un saisit une lettre
+        if ( choix<0) {
+            printf("\n[Erreur] Saisie invalide ! Veuillez entrer un chiffre entre 1 et 7.\n");
+            
+        } 
+            
+
+        
+
+        switch (choix) {
+        	case 0:
+        		enregistrer_client(clients,&nbClients);
+        		break;
+            case 1:
+                
+                menu_creer_compte();
+                break;
+            case 2:
+                        
+
+                // Connexion avec le travail de Firhyaal
+                menu_crediter();
+                break;
+                
+            case 3:
+                
+                menu_debiter();
+                
+                break;
+                
+            case 4:
+              menu_consulter();
+                break;
+                
+            case 5:
+                menu_rechercher_client();
+             break;
+                
+            case 6:
+               menu_historique_compte();
+                break;
+                
+            case 7:
+                afficher_titre_encadre("fermeture du compte bancaire");
+                break;
+                
+            default:
+                printf("\n[Attention] Option inconnue ! Choisis un chiffre entre 1 et 7.\n\n");
+        }
+    } while (choix >= 0);
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
 
 
 

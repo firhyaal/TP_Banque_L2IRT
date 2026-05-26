@@ -29,10 +29,11 @@ int date_ant(Date d1, Date d2) {
 
 //fonction pour sauvegarder un client(sauvegarde tous les clients dans clients.txt)
 void sauvegarder_clients (Client clients[], int nbClients){
+	int i;
     FILE * f = fopen("clients.txt", "w");
     if (f == NULL)
         return;
-    for (int i = 0; i < nbClients; i++){
+    for ( i = 0; i < nbClients; i++){
         fprintf(f,"%d| %s| %s| %c| %d/%d/%d| %s\n",
         clients[i].id,
         clients[i].nom,
@@ -49,6 +50,7 @@ void sauvegarder_clients (Client clients[], int nbClients){
 /*fonction pour charger les clients depuis le fichier
 Charge les clients depuis le fichier clients.txt et retourne le nombre de clients chargés*/
 int charger_clients(Client clients[]) {
+	
     FILE *f = fopen("clients.txt", "r");
     if (f == NULL) return 0;  // fichier inexistant → 0 client
 
@@ -67,10 +69,11 @@ int charger_clients(Client clients[]) {
     fclose(f);
     return nbClients;   // retourne le nombre de clients lus
 }
-
+	
 //fonction pour rechercher un client par son id(recherche par id et retourne l'indice ou -1)
 int rechercher_client_par_id (Client clients[], int nbClients, unsigned int id){
-    for (int i = 0; i < nbClients; i++){
+	int i;
+    for (i=0; i < nbClients; i++){
         if (clients[i].id == id)
             return i;
     }
@@ -114,8 +117,9 @@ void enregistrer_client (Client clients[], int *nbClients){
 /*fonction pour rechercher un client par son nom
 retourne tous les clients portant le nom et les affiche*/
 void rechercher_par_nom(Client clients[], int nbClients, char nom[]) {
+	int i;
     int trouve = 0;
-    for (int i = 0; i < nbClients; i++) {
+    for (i = 0; i < nbClients; i++) {
         if (strcmp(clients[i].nom, nom) == 0) {
             printf("ID: %d | %s %s | %c | %s\n",
                    clients[i].id, clients[i].prenom, clients[i].nom,

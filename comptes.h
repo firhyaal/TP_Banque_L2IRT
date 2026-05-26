@@ -10,8 +10,8 @@
 
 // Charger depuis comptes.txt dans le tableau de compte
 
-void chargerComptes(Compte comptes[], int *n, int *dernierNumero) {
-
+void chargerComptes(Compte comptes[], int *n) {
+	int *dernierNumero;
     FILE *f = fopen("comptes.txt", "r");
 
     if (f == NULL) return;
@@ -40,12 +40,12 @@ void chargerComptes(Compte comptes[], int *n, int *dernierNumero) {
 // Sauvegarder dans comptes.txt
 
 void sauvegarderComptes(Compte comptes[], int n) {
-
+	int i;
     FILE *f = fopen("comptes.txt", "w");
 
     if (f == NULL) return;
 
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         fprintf(f, "%d|%u|%.0f|%.0f|%s|%s|%s|%s|%d/%d/%d\n",
             comptes[i].numero,
             comptes[i].idClient,
@@ -75,10 +75,11 @@ void initialiserCompte(Compte *c) {
 
 // Creation d'un compte
 
-void creerCompte(Compte comptes[], int *n, int *dernierNumero, Client clients[], int *nbClients) {
-
+void creerCompte(Compte comptes[], int *n,Client clients[], int *nbClients) {
+	int *dernierNumero;
     int choix;
     unsigned int idClient ;
+    int i ;
 
     do {
         printf("S'agit-il d'un nouveau client ?\n");
@@ -141,7 +142,7 @@ void creerCompte(Compte comptes[], int *n, int *dernierNumero, Client clients[],
                 printf("Nom du client : ");
                 scanf("%s", nom);
                 trouve = 0;
-                for (int i = 0; i < *nbClients; i++) {
+                for (i= 0; i < *nbClients; i++) {
                     if (strcmp(clients[i].nom, nom) == 0)
                         trouve = 1;
                 }
@@ -226,8 +227,8 @@ void creerCompte(Compte comptes[], int *n, int *dernierNumero, Client clients[],
 // Rechercher un compte par son num de compte
 
 int rechercherCompte(Compte comptes[], int n, int numero) {
-
-    for (int i = 0; i < n; i++) {
+	int i;
+    for (i = 0; i < n; i++) {
         if (comptes[i].numero == numero)
             return i;
     }
@@ -272,9 +273,10 @@ void consulterCompte(Compte comptes[], int n) {
 
 // Rechercher client par son num de compte & afficher ses infos personnelles
 
-void rechercherClientParNumeroCompte(Compte comptes[], int n, Client clients[], int nbClients) {
+void rechercherParNumeroCompte(Compte comptes[], int n, Client clients[], int nbClients) {
     int numero;
     int index ;
+    int i;
     do{
         printf("Numero du compte : ");
         scanf("%d", &numero);
@@ -288,7 +290,7 @@ void rechercherClientParNumeroCompte(Compte comptes[], int n, Client clients[], 
 
     unsigned int idClient = comptes[index].idClient;
     int trouve = 0;
-    for (int i = 0; i < nbClients; i++) {
+    for (i = 0; i < nbClients; i++) {
         if (clients[i].id == idClient) {
             printf("\nINFORMATIONS PERSONNELLES DU CLIENT ASSOCIE AU COMPTE %d\n", numero);
             printf("ID : %u\n", clients[i].id);
