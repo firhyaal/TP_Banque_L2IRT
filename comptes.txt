@@ -1,0 +1,7 @@
+1001|15|10000|200000|epargne|privilege|bloque|hjkjhj|26/5/2026
+1002|17|10000|0|epargne|simple|actif|hj|26/5/2026
+1003|18|0|0|courant|simple|actif|ij|26/5/2026
+1004|20|10000|200000|epargne|privilege|actif|kj|26/5/2026
+1005|10|0|0|courant|simple|actif|ij|26/5/2026
+1006|20|10000|0|epargne|simple|actif|oj|26/5/2026
+1007|20|0|0|courant|simple|actif|oj|26/5/2026
