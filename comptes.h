@@ -75,8 +75,8 @@ void initialiserCompte(Compte *c) {
 
 // Creation d'un compte
 
-void creerCompte(Compte comptes[], int *n,Client clients[], int *nbClients) {
-	int *dernierNumero;
+void creerCompte(Compte comptes[], int *n,Client clients[], int *nbClients,int *dernierNumero) {
+	
     int choix;
     unsigned int idClient ;
     int i ;

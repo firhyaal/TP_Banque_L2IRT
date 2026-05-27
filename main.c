@@ -116,7 +116,7 @@ void sauvegarde_globale(){
 void menu_creer_compte(){
 	afficher_titre_encadre("CREER UN COMPTE");
 	nbClients=charger_clients(clients);
-	creerCompte(comptes,&nbComptes,clients,&nbClients);
+	creerCompte(comptes,&nbComptes,clients,&nbClients,&dernier_num);
 		sauvegarde_globale();
 }
 void menu_consulter(){
@@ -203,7 +203,7 @@ void menu_historique_compte(){
 }
 void afficherMenu() {
     afficher_titre_encadre("BANQUE-MENU PRINCIPAL");
-    //printf("0-s'enregistrer\n");
+    printf("0-s'enregistrer\n");
     printf("1. Creer un nouveau compte bancaire\n");
     printf("2. Crediter un compte (Versement)\n");
     printf("3. Debiter un compte (Retrait)\n");
@@ -243,9 +243,10 @@ int main() {
         
 
         switch (choix) {
-        	/*case 0:
+        	case 0:
+        		afficher_titre_encadre("S'ENREGISTRER");
         		enregistrer_client(clients,&nbClients);
-        		break;*/
+        		break;
             case 1:
                 
                 menu_creer_compte();
@@ -282,7 +283,7 @@ int main() {
             default:
                 printf("\n[Attention] Option inconnue ! Choisis un chiffre entre 1 et 7.\n\n");
         }
-    } while (choix >= 0);
+    } while (choix < 0);
 
     return 0;
 }
