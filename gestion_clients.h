@@ -30,7 +30,7 @@ int date_ant(Date d1, Date d2) {
 //fonction pour sauvegarder un client(sauvegarde tous les clients dans clients.txt)
 void sauvegarder_clients (Client clients[], int nbClients){
 	int i;
-    FILE * f = fopen("clients.txt", "w");
+    FILE * f = fopen("clients.txt", "w+");
     if (f == NULL)
         return;
     for ( i = 0; i < nbClients; i++){

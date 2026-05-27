@@ -1,6 +1,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
+#include <windows.h>
 #include "structures.h"
 #include "gestion_clients.h"
 #include "operations.h"
@@ -13,7 +15,10 @@ int nbClients=0;
 int nbComptes=0;
 int nbJournal=0;
 int indexCompte;
-void afficher_titre_encadre(char titre[]) {
+int dernier_num = 1000;
+	
+
+/*void afficher_titre_encadre(char titre[]) {
     int longueur = strlen(titre);
     int i;
 
@@ -33,11 +38,72 @@ void afficher_titre_encadre(char titre[]) {
         printf("-");
     }
     printf("+\n\n");
-	}
+	}*/
 //initialisation des fichiers
+// Permet de positionner le curseur de souris sur l'√©cran √† l'endroit
+// de coordonn√©es x,y
+void gotoxy(int x, int y) 
+{ 
+    HANDLE hConsoleOutput; 
+    COORD dwCursorPosition; 
+    fflush(stdout); 
+    dwCursorPosition.X = x; 
+    dwCursorPosition.Y = y; 
+    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE); 
+    SetConsoleCursorPosition(hConsoleOutput,dwCursorPosition); 
+} 
+
+// Pour effacer l'√©cran 
+void clrscr()
+{ 
+  system("cls"); 
+} 
+
+
+// Fonction pour dessiner un rectangle
+void rectangle(int x, int y, int lon, int haut)
+{
+     int i;
+     gotoxy(x,y); printf("%c",218);
+     gotoxy(x+lon,y); printf("%c",191);
+     gotoxy(x, y+haut); printf("%c",192);
+     gotoxy(x+lon, y+haut); printf("%c",217);     
+     for (i=1; i<lon;i++)
+     {
+         gotoxy(x+i,y); printf("%c",196); 
+         gotoxy(x+i,y+haut); printf("%c",196);
+     }
+     for (i=1; i<haut;i++)
+     {
+         gotoxy(x,y+i); printf("%c",179); 
+         gotoxy(x+lon,y+i); printf("%c",179);
+     }
+}
+
+//Pour d√©finir une couleur de texte et une couleur de fond du texte.
+void Color(int t,int f)
+{
+	HANDLE H=GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(H,f*16+t);
+}
+void afficher_titre_encadre(char titre[]){
+	//automatiser la largeur
+	int longueur = strlen(titre);
+	int largeur_cadre=longueur+8;
+	int debut_x=(70-largeur_cadre);
+	clrscr();
+	Color(15,0);
+	rectangle(debut_x,2,largeur_cadre,5);
+	gotoxy(debut_x+4,4);
+	printf("%s",titre);
+	//Color(7,0);
+	gotoxy(2,12);
+	
+}
+
 void init_data(){
 	charger_clients(clients);
-	chargerComptes(comptes,&nbComptes);
+	chargerComptes(comptes,&nbComptes,&dernier_num);
 	
 }
 //sauvegarde des donnÈes
@@ -49,6 +115,7 @@ void sauvegarde_globale(){
 }
 void menu_creer_compte(){
 	afficher_titre_encadre("CREER UN COMPTE");
+	nbClients=charger_clients(clients);
 	creerCompte(comptes,&nbComptes,clients,&nbClients);
 		sauvegarde_globale();
 }
@@ -59,34 +126,43 @@ void menu_consulter(){
 }
 //fonction pour le menu dÈbiter
 void menu_debiter(){
-	
 	float montant_d;
 	double solde_avant=0;
 	int num;
+	
 	char pinc[10];
 	afficher_titre_encadre("DEBITER UN COMPTE");
-	printf("NumÈro de compte:\n");
-	scanf("%d",&num);
-	printf("Code pin:\n");
-	scanf("%s",&pinc);
-	printf("Montant a debiter:\n");
-	scanf("%.2f",&montant_d);
+	chargerComptes(comptes,&nbComptes,&dernier_num);
+	printf("Numero de compte:");
+	scanf(" %d",&num);
+	while(getchar() != '\n');
+	/*printf("Code pin:");
+	scanf("%s",pinc);*/
+	printf("Montant a debiter:");
+	scanf(" %f",&montant_d);
+	
 	debiter_compte(comptes,nbComptes,num,montant_d,pinc);
 	enregistrer_journal(num,"DEBIT",montant_d,comptes[indexCompte].solde);
 	
 }
 void menu_crediter(){
-	
+	int index;
 	float montant_c;
 	int numeroc;
-	char pinco[10];
+	
 	afficher_titre_encadre("CREDITER UN COMPTE");
-	printf("NumÈro de compte:\n");
-	scanf("%d",numeroc);
-	printf("Montant a crediter:\n");
-	scanf("%.2f",&montant_c);
+	
+	chargerComptes(comptes,&nbComptes,&dernier_num);
+	
+	printf("NumÈro de compte:");
+	
+	scanf(" %d",&numeroc);
+	//while(getchar() != '\n');
+	printf("Montant a crediter:");
+	
+	scanf(" %f",&montant_c);
 	crediter_compte(comptes,nbComptes,numeroc,montant_c);
-	enregistrer_journal(numeroc,"CREDIT",montant_c,comptes[indexCompte].solde);
+	enregistrer_journal(numeroc,"CREDIT",montant_c,comptes[index].solde);
 	
 }
 void menu_rechercher_client(){
@@ -95,14 +171,18 @@ void menu_rechercher_client(){
 	int numCompte;
 	afficher_titre_encadre("RECHERCHER UN CLIENT");
 	printf("1-Par nom de famille\n2-par numÈro de compte\nchoix:");
-	scanf("%d\n",&choice);
+	scanf(" %d",&choice);
+	while(getchar() != '\n');
 	if(choice==1){
+		nbClients=charger_clients(clients);
 		printf("Veuillez entrer votre nom:");
-		scanf("%s\n",&nom);
+		scanf(" %s",nom);
 		rechercher_par_nom(clients,nbClients,nom);
+		
 	}else if(choice==2){
+		chargerComptes(comptes,&nbComptes,&dernier_num);
 		printf("Veuillez entrer votre numero de compte:");
-		scanf("%s\n",&numCompte);
+		scanf(" %s",&numCompte);
 		rechercherParNumeroCompte(comptes,nbComptes,clients,nbClients);
 	} else{
 		printf("erreur choisissez le bon chiffre");
@@ -112,15 +192,18 @@ void menu_rechercher_client(){
 void menu_historique_compte(){
 	char nom[15];
 	int numeCompte;
+	nbClients=charger_clients(clients);
 	printf("Veuillez entrer votre nom:");
-	scanf("%s\n",&nom);
+	scanf(" %s",nom);
+	//while(getchar() != '\n');
+	chargerComptes(comptes,&nbComptes,&dernier_num);
 	printf("Veuillez entrer votre numero de compte:");
-	scanf("%s\n",&numeCompte);
+	scanf(" %d",&numeCompte);
 	afficher_historique(numeCompte,comptes,nbComptes,clients,nbClients);
 }
 void afficherMenu() {
     afficher_titre_encadre("BANQUE-MENU PRINCIPAL");
-    printf("0-s'enregistrer\n");
+    //printf("0-s'enregistrer\n");
     printf("1. Creer un nouveau compte bancaire\n");
     printf("2. Crediter un compte (Versement)\n");
     printf("3. Debiter un compte (Retrait)\n");
@@ -133,7 +216,7 @@ void afficherMenu() {
 }
 
 int main() {
-	init_data;
+	init_data();
 
     int choix;
     /*int idRecherche;
@@ -149,6 +232,7 @@ int main() {
         
         printf("Votre choix : ");
         scanf("%d", &choix);
+        while(getchar()!= '\n');
         // S√©curit√© anti-plantage si quelqu'un saisit une lettre
         if ( choix<0) {
             printf("\n[Erreur] Saisie invalide ! Veuillez entrer un chiffre entre 1 et 7.\n");
@@ -159,9 +243,9 @@ int main() {
         
 
         switch (choix) {
-        	case 0:
+        	/*case 0:
         		enregistrer_client(clients,&nbClients);
-        		break;
+        		break;*/
             case 1:
                 
                 menu_creer_compte();

@@ -10,8 +10,8 @@
 
 // Charger depuis comptes.txt dans le tableau de compte
 
-void chargerComptes(Compte comptes[], int *n) {
-	int *dernierNumero;
+void chargerComptes(Compte comptes[], int *n, int *dernierNumero) {
+	
     FILE *f = fopen("comptes.txt", "r");
 
     if (f == NULL) return;
@@ -41,7 +41,7 @@ void chargerComptes(Compte comptes[], int *n) {
 
 void sauvegarderComptes(Compte comptes[], int n) {
 	int i;
-    FILE *f = fopen("comptes.txt", "w");
+    FILE *f = fopen("comptes.txt", "w+");
 
     if (f == NULL) return;
 
@@ -123,6 +123,7 @@ void creerCompte(Compte comptes[], int *n,Client clients[], int *nbClients) {
             int index;
             do{
                 printf("ID client : ");
+                while(getchar() != '\n');
                 scanf("%u", &id);
                 index = rechercher_client_par_id(clients, *nbClients, id);
                 if (index == -1) {
